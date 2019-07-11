@@ -41,7 +41,7 @@ import axios from '~/plugins/axios';
       });
       return { userlist };
     } catch (err) {
-      console.error(err);
+      console.log("user not found")
     }
   }
 })

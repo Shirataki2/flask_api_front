@@ -99,7 +99,7 @@ export default class RegisterDialog extends Vue {
     }
     try {
       const user = await axios.post(
-        'http://localhost:5000/api/register',
+        '/api/register',
         {
           username: this.registerform.username,
           password: this.registerform.password,

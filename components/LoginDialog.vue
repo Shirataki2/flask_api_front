@@ -88,7 +88,7 @@ export default class LoginDialog extends Vue {
     }
     try {
       const {data} = await axios.post(
-        'http://localhost:5000/api/login',
+        '/api/login',
         {
           username: this.loginform.username,
           password: this.loginform.password,
