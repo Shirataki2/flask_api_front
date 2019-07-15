@@ -1,7 +1,6 @@
 import { RootState } from '@/types/root_state';
 import { GetterTree, ActionTree, ActionContext, MutationTree } from 'vuex';
 import { User, UserClass, UserState, Auth, AuthClass } from '@/types/users_state'
-import cookieparser from 'cookieparser';
 export const name = 'users';
 
 export const state = (): UserState => ({

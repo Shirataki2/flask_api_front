@@ -28,11 +28,11 @@ export default class UserMenu extends Vue {
       const {data} = await axios.post('/api/logout', {}, {
         headers: { Authorization: "Bearer " + refresh_token }
       })
-      this.$store.dispatch('users/setAuth', new AuthClass(0, '', ''));
-      this.$store.dispatch('users/setUser', new UserClass(false, '', 0, ''))
     }catch (err) {
       console.log(err);
     }
+    this.$store.dispatch('users/setAuth', new AuthClass(0, '', ''));
+    this.$store.dispatch('users/setUser', new UserClass(false, '', 0, ''))
   }
 }
 </script>

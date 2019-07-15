@@ -12,6 +12,10 @@
     </template>
     <v-card>
       <v-card-title primary-title class="headline">Register to Flask Social!</v-card-title>
+      <v-alert :value="errors.length > 0" color="error" icon="warning" outline>
+        <v-list v-for="error in errors" :key="error.id">{{ error }}</v-list>
+      </v-alert>
+
       <v-card-text>
         <v-container grid-list-md>
           <v-layout row wrap>
@@ -42,6 +46,15 @@
                 @input="$v.registerform.password.$touch()"
                 @blur="$v.registerform.password.$touch()"
               ></v-text-field>
+              <v-text-field
+                v-model="registerform.password_confirm"
+                label="Password Confirm *"
+                required
+                type="password"
+                :error-messages="passwordConfirmErrors()"
+                @input="$v.registerform.password_confirm.$touch()"
+                @blur="$v.registerform.password_confirm.$touch()"
+              ></v-text-field>
             </v-flex>
           </v-layout>
         </v-container>
@@ -57,14 +70,24 @@
 
 <script lang="ts">
 import { Vue, Component, Prop } from "vue-property-decorator";
-import { required, maxLength, minLength, email } from 'vuelidate/lib/validators'
+import {
+  required,
+  maxLength,
+  minLength,
+  email,
+  sameAs
+} from "vuelidate/lib/validators";
 import { Validation } from "vuelidate";
-import { validateName, validateEmail, validatePassword } from '~/utils/validations'
+import {
+  validateName,
+  validateEmail,
+  validatePassword,
+  validatePasswordConfirm
+} from "~/utils/validations";
 import { namespace } from "vuex-class";
 import * as users from "~/store/users";
 const Users = namespace(users.name);
-import axios from '~/plugins/axios';
-
+import axios from "~/plugins/axios";
 
 @Component({
   validations: {
@@ -80,9 +103,13 @@ import axios from '~/plugins/axios';
       password: {
         required,
         minLength: minLength(8)
+      },
+      password_confirm: {
+        required,
+        sameAs: sameAs("password")
       }
     }
-  },
+  }
 })
 export default class RegisterDialog extends Vue {
   @Users.Getter user;
@@ -90,45 +117,63 @@ export default class RegisterDialog extends Vue {
   registerform = {
     username: "",
     email: "",
-    password: ""
-  }
+    password: "",
+    password_confirm: ""
+  };
+  errors: Array<string> = [];
   async submit() {
     this.$v.$touch();
-    if(this.$v.$pending || this.$v.$error) {
+    if (this.$v.$pending || this.$v.$error) {
       return;
     }
     try {
-      const user = await axios.post(
-        '/api/register',
-        {
-          username: this.registerform.username,
-          password: this.registerform.password,
-          email: this.registerform.email
-        }
-      )
+      const user = await axios.post("/api/register", {
+        username: this.registerform.username,
+        password: this.registerform.password,
+        email: this.registerform.email
+      });
       console.log(user);
-    } catch(err) {
-      console.error(err)
+      this.clear();
+    } catch (err) {
+      this.errors = []
+      switch (err.response.status) {
+        case 409:
+          this.errors.push(
+            "そのユーザ名はすでに使用されています"
+          );
+          break;
+        case 500:
+          this.errors.push(
+            "サーバ内部のエラーです．管理者に問い合わせてください．"
+          );
+          break;
+        default:
+          this.errors.push("不明なエラーです:" + err.response.statusText);
+          break;
+      }
     }
-    this.clear();
   }
   clear() {
     this.registerform = {
       username: "",
       email: "",
-      password: ""
-    }
+      password: "",
+      password_confirm: ""
+    };
     this.$v.$reset();
     this.dialog = false;
   }
   nameErrors() {
-    return validateName(this.$v.registerform!.username)
+    return validateName(this.$v.registerform!.username);
   }
   emailErrors() {
-    return validateEmail(this.$v.registerform!.email)
+    return validateEmail(this.$v.registerform!.email);
   }
   passwordErrors() {
-    return validatePassword(this.$v.registerform!.password)
+    return validatePassword(this.$v.registerform!.password);
+  }
+  passwordConfirmErrors() {
+    return validatePasswordConfirm(this.$v.registerform!.password_confirm);
   }
 }
 </script>

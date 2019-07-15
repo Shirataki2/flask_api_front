@@ -32,6 +32,7 @@ const config: NuxtConfig = {
   ** Global CSS
   */
   css: [
+    '~/css/main.css'
   ],
   /*
   ** Plugins to load before mounting the App
@@ -39,6 +40,7 @@ const config: NuxtConfig = {
   plugins: [
     { src: '~/plugins/vuelidate' },
     '~/plugins/cookie_store.ts',
+    '~/plugins/sanitize.ts',
   ],
   /*
   ** Nuxt.js modules
@@ -46,7 +48,7 @@ const config: NuxtConfig = {
   modules: [
     '@nuxtjs/vuetify',
     // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios',
+    //'@nuxtjs/axios',
     '@nuxtjs/pwa',
   ],
   /*
@@ -79,6 +81,9 @@ const config: NuxtConfig = {
     */
     extend(config, ctx) {
     }
+  },
+  workbox: {
+    dev: false
   }
 }
 export default config;
