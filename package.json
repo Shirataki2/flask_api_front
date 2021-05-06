@@ -29,7 +29,7 @@
     "@types/vuelidate": "^0.7.5",
     "axios": "^0.19.0",
     "nodemon": "^1.18.9",
-    "sanitize-html": "^1.20.1",
+    "sanitize-html": "^2.3.2",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-class-component": "^7.1.0",
